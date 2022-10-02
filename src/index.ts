@@ -1,11 +1,9 @@
 import Fastify from 'fastify';
 import { PORT } from './config';
-import excelRoute from './routes/excelRoute';
-import cors from '@fastify/cors';
+import rootRouter from './routes';
 
 const fastify = Fastify();
-
-fastify.register(excelRoute, { prefix: "excel" });
+fastify.register(rootRouter);
 
 const start = async () => {
     try {
