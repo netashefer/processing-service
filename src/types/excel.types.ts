@@ -1,0 +1,1 @@
+export type ColumnParsingMap = Record<string, (value: string) => string | Date | number>;
