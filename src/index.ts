@@ -1,8 +1,10 @@
+import cors from '@fastify/cors';
 import Fastify from 'fastify';
 import { PORT } from './config';
 import rootRouter from './routes';
 
 const fastify = Fastify();
+fastify.register(cors, {origin: true});
 fastify.register(rootRouter);
 
 const start = async () => {
