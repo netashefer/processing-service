@@ -14,7 +14,6 @@ const start = async () => {
         console.log(`server is listening on port ${PORT}`);
     } catch (err) {
         console.log(err);
-        fastify.log.error(err);
         process.exit(1);
     }
 };

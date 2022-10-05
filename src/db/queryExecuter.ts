@@ -1,6 +1,6 @@
-export const executeQuery = async (client: any, query: string) => {
+export const executeQuery = async (client: any, queryToExecute: string) => {
     try {
-        const { rows } = await client.query(query);
+        const { rows } = await client.query(queryToExecute);
         return rows;
     } catch (e) {
         console.log(e);

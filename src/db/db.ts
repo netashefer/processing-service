@@ -2,7 +2,7 @@
 import { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import { Client } from 'pg';
-
+// TODO: secure details
 const client = new Client({
     user: 'ilhsuqjubsxvgv',
     password: "620c24888ed48e741b4cb45d7b96e22a232468a1632fa9f5fb49d353b4e155e1",

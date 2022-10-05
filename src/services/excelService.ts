@@ -1,12 +1,10 @@
+import { parse } from 'date-fns';
+import { v4 as uuid } from 'uuid';
+import { DATABASE_NAME } from "../db/db.constants";
+import { executeQuery } from "../db/queryExecuter";
 import { ColumnParsingMap, DataSource } from "../types/excel.types";
 import { Table } from "../types/table.types";
-import * as XLSX from 'xlsx';
-import fs from 'fs';
-import { parse } from 'date-fns';
-import { executeQuery } from "../db/queryExecuter";
-import { DATABASE_NAME } from "../db/db.constants";
-import { v4 as uuid } from 'uuid';
-const DIRECTORY_PATH = "C:/Users/neta1/Desktop/try1/";
+
 enum supportedDataTypes {
     date = "(DATE)",
     number = "(NUMBER)"
@@ -17,7 +15,7 @@ class ExcelService {
 
     parseTable(table: Table) {
         const columnParsingMap: ColumnParsingMap = {};
-        table.schema.forEach(column => { // look in the office about locale
+        table.schema.forEach(column => { // look in the office about locale. add error handle
             if (column.includes(supportedDataTypes.date)) { // support DD/MM/yyyy
                 columnParsingMap[column] = (dateString: string) => {
                     const [month, date, year] = dateString?.split("/");
@@ -41,14 +39,6 @@ class ExcelService {
         return table;
     }
 
-    saveExcelFile(file: XLSX.WorkBook) {
-        const dataSourceId = "filename";
-        if (!fs.existsSync(DIRECTORY_PATH)) {
-            fs.mkdirSync(DIRECTORY_PATH, { recursive: true });
-        }
-        XLSX.writeFileXLSX(file, `${DIRECTORY_PATH}${dataSourceId}.xlsx`);
-    }
-
     async addDataSource(client: any, excelDataSource: DataSource) {
         //todo: compress
         const id = uuid();
@@ -62,4 +52,4 @@ class ExcelService {
     }
 }
 
-export default ExcelService;
+export const excelService = new ExcelService();
