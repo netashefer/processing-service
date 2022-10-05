@@ -1,5 +1,15 @@
 import { OpenAPIV3 } from "openapi-types";
+import { table } from './table.schema';
 
-export const excelFile: OpenAPIV3.SchemaObject = {
+export const excelDataSource: OpenAPIV3.SchemaObject = {
     type: "object",
+    properties: {
+        table,
+        displayName: { type: "string" },
+        dashboardId: { type: "string" },
+    }
+};
+
+export const dataSourceId: OpenAPIV3.SchemaObject = {
+    type: "string",
 };

@@ -1,22 +1,17 @@
 import { FastifyInstance } from "fastify";
-import * as XLSX from 'xlsx';
-import ExcelParserService from "../../services/excelParser";
-import { Table } from "../../types/table.types";
-import { excelFilePostSchema, excelPostSchema } from "./schemas";
-
+import ExcelService from "../../services/excelService";
+import { DataSource } from "../../types/excel.types";
+import { excelPostSchema } from "./schemas";
 
 const excelRoute = async (fastify: FastifyInstance) => {
 
-    fastify.post<{ Body: { table: Table; }; }>('/parse', { schema: excelPostSchema }, async (request, reply) => {
-        const table = request.body.table;
-        const parsedTable = new ExcelParserService().parseTable(table);
-        return parsedTable;
-    });
+    fastify.post<{ Body: DataSource; }>('/add', { schema: excelPostSchema }, async (request, reply) => {
+        const { table, displayName, dashboardId } = request.body;
+        const parsedTable = new ExcelService().parseTable(table);
 
-    fastify.post<{ Body: { file: XLSX.WorkBook; }; }>('/save', { schema: excelFilePostSchema }, async (request, reply) => {
-        const fileBinary = request.body.file;
-        new ExcelParserService().saveExcelFile(fileBinary);
-        return;
+        // @ts-ignore - todo: make type of fastify.db.client
+        const dataSourceId = new ExcelService().addDataSource(fastify.db.client, { displayName, dashboardId, table: parsedTable });
+        return dataSourceId;
     });
 };
 

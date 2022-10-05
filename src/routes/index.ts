@@ -1,10 +1,10 @@
-import fastifySwagger from '@fastify/swagger'
+import fastifySwagger from '@fastify/swagger';
 import { FastifyPluginCallback } from 'fastify';
-import excelRoute from './excel/excelRoute'
+import excelRoute from './excel/excelRoute';
 
-const rootRouter: FastifyPluginCallback = async (fastify, options ,done) => {
+const rootRouter: FastifyPluginCallback = async (fastify, options, done) => {
     await fastify.register(fastifySwagger, {
-        routePrefix: '/swagger', 
+        routePrefix: '/',
         exposeRoute: true,
         swagger: {
             info: {
@@ -18,6 +18,6 @@ const rootRouter: FastifyPluginCallback = async (fastify, options ,done) => {
     await fastify.register(excelRoute, { prefix: "excel" });
 
     done();
-}
+};
 
 export default rootRouter;
