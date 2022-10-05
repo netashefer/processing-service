@@ -50,6 +50,7 @@ class ExcelService {
     }
 
     async addDataSource(client: any, excelDataSource: DataSource) {
+        //todo: compress
         const id = uuid();
         const query = `
         INSERT INTO ${DATABASE_NAME}."${this.tableName}"
