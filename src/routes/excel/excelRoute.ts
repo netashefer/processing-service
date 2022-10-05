@@ -5,7 +5,7 @@ import { excelPostSchema } from "./schemas";
 
 const excelRoute = async (fastify: FastifyInstance) => {
 
-    fastify.post<{ Body: DataSource; }>('/add', { schema: excelPostSchema }, async (request, reply) => {
+    fastify.post<{ Body: DataSource; }>('/addDataSource', { schema: excelPostSchema }, async (request, reply) => {
         const { table, displayName, dashboardId } = request.body;
         const parsedTable = excelService.parseTable(table);
 
