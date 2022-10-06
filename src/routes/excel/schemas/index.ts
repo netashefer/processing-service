@@ -6,8 +6,8 @@ import { excelResponse } from "./excelResponse.schema";
 const excelTags = ["excel"];
 
 export const excelPostSchema: FastifySchema = {
-    summary: 'Parse excel file',
-    description: 'Parse a given excel file',
+    summary: 'add excel data source',
+    description: 'add excel data source',
     operationId: 'postExcel',
     body: excelRequestBody,
     response: {
@@ -15,4 +15,4 @@ export const excelPostSchema: FastifySchema = {
         default: errorResponse
     },
     tags: excelTags
-}
+};
