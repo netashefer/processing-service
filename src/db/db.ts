@@ -3,12 +3,12 @@ import { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import { Client } from 'pg';
 // TODO: secure details
-const client = new Client({
-    user: 'ilhsuqjubsxvgv',
-    password: "620c24888ed48e741b4cb45d7b96e22a232468a1632fa9f5fb49d353b4e155e1",
-    host: 'ec2-34-247-72-29.eu-west-1.compute.amazonaws.com',
+export const client = new Client({
+    user: 'tivbbvpcyifsmb',
+    password: "14e33f00cacb4bc5591250387370c3fa1e51ef684d1f66f1a6d6b4bb30142708",
+    host: 'ec2-52-18-201-153.eu-west-1.compute.amazonaws.com',
     port: 5432,
-    database: "df9qiqql7gpdtj",
+    database: "detg4pkjjgn995",
     ssl: {
         rejectUnauthorized: false,
     }

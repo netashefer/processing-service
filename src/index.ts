@@ -3,6 +3,7 @@ import Fastify from 'fastify';
 import { PORT } from './config';
 import rootRouter from './routes';
 import dbConnector from './db/db';
+
 const fastify = Fastify();
 fastify.register(cors, { origin: true });
 fastify.register(rootRouter);
