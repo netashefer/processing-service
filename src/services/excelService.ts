@@ -64,12 +64,7 @@ class ExcelService {
         ;`;
         const rows = await executeQuery<{ dataTable: string; }>(query);
         const compressTable = rows?.[0]?.dataTable;
-        try {
-            return compressTable ? decompress(JSON.parse(compressTable)) : null;
-        } catch (e) {
-            console.log(e);
-            return null;
-        }
+        return compressTable ? decompress(JSON.parse(compressTable)) : null;
     }
 }
 
