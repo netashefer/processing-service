@@ -10,3 +10,14 @@ export const excelRequestBody: OpenAPIV3.SchemaObject = {
     },
     required: ["table", "displayName", "dashboardId"]
 };
+
+export const excelReplaceRequestBody: OpenAPIV3.SchemaObject = {
+    type: "object",
+    properties: {
+        table,
+        displayName: { type: "string" },
+        dashboardId: { type: "string" },
+        dataSourceId: { type: "string" },
+    },
+    required: ["table", "displayName", "dashboardId", "dataSourceId"]
+};

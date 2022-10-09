@@ -80,6 +80,23 @@ class ExcelService {
         ;`;
         return await executeQuery<{ dataSourceId: string, displayName: string; }>(query);
     }
+
+    async deleteDataSource(dataSourceId: string) {
+        const query = `
+        DELETE FROM ${DATABASE_NAME}."${this.tableName}"
+        WHERE "dataSourceId" = '${dataSourceId}'
+        ;`;
+        return await executeQuery(query);
+    }
+
+    async replaceDataSource(excelDataSource: DataSourcePayload) {
+        const query = `
+        UPDATE ${DATABASE_NAME}."${this.tableName}"
+        SET "displayName" = '${excelDataSource.displayName}', "dataTable" = '${JSON.stringify(excelDataSource.table)}'
+        WHERE "dataSourceId" = '${excelDataSource.dataSourceId}'
+        ;`;
+        await executeQuery(query);
+    }
 }
 
 export const excelService = new ExcelService();

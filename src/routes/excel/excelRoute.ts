@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { excelService } from "../../services/excelService";
 import { DataSourcePayload } from "../../types/excel.types";
-import { excelPostSchema } from "./schemas";
+import { excelPostSchema, excelPutSchema } from "./schemas";
 
 const excelRoute = async (fastify: FastifyInstance) => {
 
@@ -26,6 +26,17 @@ const excelRoute = async (fastify: FastifyInstance) => {
     fastify.get('/schema/:id', {}, async (request, reply) => {
         const { id } = request.params as any;
         return await excelService.getShcemaOfSourceId(id);
+    });
+
+    fastify.delete('/:id', {}, async (request, reply) => {
+        const { id } = request.params as any;
+        return await excelService.deleteDataSource(id);
+    });
+
+    fastify.put<{ Body: DataSourcePayload; }>('/replace', { schema: excelPutSchema }, async (request, reply) => {
+        const { table, displayName, dashboardId, dataSourceId } = request.body;
+        const parsedTable = excelService.parseTable(table);
+        return await excelService.replaceDataSource({ dataSourceId, displayName, dashboardId, table: parsedTable });
     });
 };
 
