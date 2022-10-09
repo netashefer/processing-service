@@ -8,7 +8,7 @@ const excelRoute = async (fastify: FastifyInstance) => {
     fastify.post<{ Body: DataSourcePayload; }>('/addDataSource', { schema: excelPostSchema }, async (request, reply) => {
         const { table, displayName, dashboardId } = request.body;
         const parsedTable = excelService.parseTable(table);
-        return excelService.addDataSource({ displayName, dashboardId, table: parsedTable });
+        return await excelService.addDataSource({ displayName, dashboardId, table: parsedTable });
     });
 
     fastify.get('/getDataTable/:id', {}, async (request, reply) => {
@@ -16,6 +16,16 @@ const excelRoute = async (fastify: FastifyInstance) => {
         const { id } = request.params as any;
         const parsedTable = await excelService.getDataBySourceId(id);
         return parsedTable;
+    });
+
+    fastify.get('/dashboard/:id', {}, async (request, reply) => {
+        const { id } = request.params as any;
+        return await excelService.getAllDashboardDataSources(id);
+    });
+
+    fastify.get('/schema/:id', {}, async (request, reply) => {
+        const { id } = request.params as any;
+        return await excelService.getShcemaOfSourceId(id);
     });
 };
 

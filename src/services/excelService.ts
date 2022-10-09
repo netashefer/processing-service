@@ -1,4 +1,3 @@
-import { compress, decompress } from 'compress-json';
 import { parse } from 'date-fns';
 import { v4 as uuid } from 'uuid';
 import { DATABASE_NAME, Tables } from "../db/db.constants";
@@ -45,26 +44,41 @@ class ExcelService {
     }
 
     async addDataSource(excelDataSource: DataSourcePayload) {
-        const id = uuid();
-        let compressed = JSON.stringify(compress(excelDataSource.table));
-
+        const id = uuid(); // pako
         const query = `
         INSERT INTO ${DATABASE_NAME}."${this.tableName}"
         ("dataSourceId", "displayName", "dashboardId", "dataTable")
-        VALUES ('${id}', '${excelDataSource.displayName}', '${excelDataSource.dashboardId}', '${compressed}')
+        VALUES ('${id}', '${excelDataSource.displayName}', '${excelDataSource.dashboardId}', '${JSON.stringify(excelDataSource.table)}')
         ;`;
         await executeQuery(query);
         return id;
     }
 
-    async getDataBySourceId(dataSoucreId: string) {
+    async getDataBySourceId(dataSourceId: string) {
         const query = `
         SELECT "dataTable" FROM ${DATABASE_NAME}."${this.tableName}"
-        WHERE "dataSourceId" = '${dataSoucreId}'
+        WHERE "dataSourceId" = '${dataSourceId}'
         ;`;
         const rows = await executeQuery<{ dataTable: string; }>(query);
-        const compressTable = rows?.[0]?.dataTable;
-        return compressTable ? decompress(JSON.parse(compressTable)) : null;
+        return JSON.parse(rows?.[0]?.dataTable); // pako
+    }
+
+    async getShcemaOfSourceId(dataSourceId: string) {
+        const query = `
+        SELECT "dataTable" FROM ${DATABASE_NAME}."${this.tableName}"
+        WHERE "dataSourceId" = '${dataSourceId}'
+        ;`;
+        const rows = await executeQuery<{ dataTable: Table; }>(query); // pako
+        const table = rows?.[0]?.dataTable as any;
+        return table.schema;
+    }
+
+    async getAllDashboardDataSources(dashboardId: string) {
+        const query = `
+        SELECT "dataSourceId", "displayName" FROM ${DATABASE_NAME}."${this.tableName}"
+        WHERE "dashboardId" = '${dashboardId}'
+        ;`;
+        return await executeQuery<{ dataSourceId: string, displayName: string; }>(query);
     }
 }
 
