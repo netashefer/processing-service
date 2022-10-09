@@ -5,6 +5,8 @@ import { PORT } from './config';
 import dbConnector from './db/db';
 import rootRouter from './routes';
 import fs from 'fs';
+import {fastifyAuth0Verify} from 'fastify-auth0-verify';
+import { auth0Config } from './auth/authConfig';
 
 const fastify = Fastify({
 	https: {
@@ -12,9 +14,19 @@ const fastify = Fastify({
 		cert: fs.readFileSync(path.join(__dirname, 'cert.crt'))
 	}}
 );
+
 fastify.register(cors, { origin: true });
 fastify.register(rootRouter);
 fastify.register(dbConnector);
+fastify.register(fastifyAuth0Verify, auth0Config);
+fastify.addHook("onRequest", async (request, reply) => {
+	try {
+	  await request.jwtVerify()
+	} catch (err) {
+	console.log(err);
+	  reply.send(err)
+	}
+  });
 
 const start = async () => {
     try {
