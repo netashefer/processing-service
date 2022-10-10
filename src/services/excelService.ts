@@ -44,7 +44,7 @@ class ExcelService {
     }
 
     async addDataSource(excelDataSource: DataSourcePayload) {
-        const id = uuid(); // pako
+        const id = uuid(); // TODO:compress with pako
         const query = `
         INSERT INTO ${DATABASE_NAME}."${this.tableName}"
         ("dataSourceId", "displayName", "dashboardId", "dataTable")
@@ -60,7 +60,7 @@ class ExcelService {
         WHERE "dataSourceId" = '${dataSourceId}'
         ;`;
         const rows = await executeQuery<{ dataTable: string; }>(query);
-        return JSON.parse(rows?.[0]?.dataTable); // pako
+        return JSON.parse(rows?.[0]?.dataTable); // TODO:compress with pako
     }
 
     async getShcemaOfSourceId(dataSourceId: string) {
@@ -68,7 +68,7 @@ class ExcelService {
         SELECT "dataTable" FROM ${DATABASE_NAME}."${this.tableName}"
         WHERE "dataSourceId" = '${dataSourceId}'
         ;`;
-        const rows = await executeQuery<{ dataTable: Table; }>(query); // pako
+        const rows = await executeQuery<{ dataTable: Table; }>(query); // TODO:compress with pako
         const table = rows?.[0]?.dataTable as any;
         return table.schema;
     }
@@ -95,7 +95,7 @@ class ExcelService {
         SET "displayName" = '${excelDataSource.displayName}', "dataTable" = '${JSON.stringify(excelDataSource.table)}'
         WHERE "dataSourceId" = '${excelDataSource.dataSourceId}'
         ;`;
-        await executeQuery(query);
+        return await executeQuery(query);
     }
 }
 
