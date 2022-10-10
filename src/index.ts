@@ -1,12 +1,12 @@
 import cors from '@fastify/cors';
 import Fastify from 'fastify';
+import { fastifyAuth0Verify } from 'fastify-auth0-verify';
+import fs from 'fs';
 import path from 'path';
+import { auth0Config } from './auth/authConfig';
 import { PORT } from './config';
 import dbConnector from './db/db';
 import rootRouter from './routes';
-import fs from 'fs';
-import {fastifyAuth0Verify} from 'fastify-auth0-verify';
-import { auth0Config } from './auth/authConfig';
 
 const fastify = Fastify({
 	https: {
