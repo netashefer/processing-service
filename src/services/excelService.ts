@@ -1,4 +1,5 @@
 import { parse } from 'date-fns';
+import pako from 'pako';
 import { v4 as uuid } from 'uuid';
 import { DATABASE_NAME, Tables } from "../db/db.constants";
 import { executeQuery } from "../db/queryExecuter";
@@ -44,11 +45,12 @@ class ExcelService {
     }
 
     async addDataSource(excelDataSource: DataSourcePayload) {
-        const id = uuid(); // TODO:compress with pako
+        const id = uuid();
+        const compressedTable = this.compressTable(excelDataSource.table);
         const query = `
         INSERT INTO ${DATABASE_NAME}."${this.tableName}"
         ("dataSourceId", "displayName", "dashboardId", "dataTable")
-        VALUES ('${id}', '${excelDataSource.displayName}', '${excelDataSource.dashboardId}', '${JSON.stringify(excelDataSource.table)}')
+        VALUES ('${id}', '${excelDataSource.displayName}', '${excelDataSource.dashboardId}', '${compressedTable}')
         ;`;
         await executeQuery(query);
         return id;
@@ -60,7 +62,7 @@ class ExcelService {
         WHERE "dataSourceId" = '${dataSourceId}'
         ;`;
         const rows = await executeQuery<{ dataTable: string; }>(query);
-        return JSON.parse(rows?.[0]?.dataTable); // TODO:compress with pako
+        return this.decompressTable(rows?.[0]?.dataTable);
     }
 
     async getShcemaOfSourceId(dataSourceId: string) {
@@ -68,9 +70,9 @@ class ExcelService {
         SELECT "dataTable" FROM ${DATABASE_NAME}."${this.tableName}"
         WHERE "dataSourceId" = '${dataSourceId}'
         ;`;
-        const rows = await executeQuery<{ dataTable: Table; }>(query); // TODO:compress with pako
-        const table = rows?.[0]?.dataTable as any;
-        return table.schema;
+
+        const rows = await executeQuery<{ dataTable: string; }>(query);
+        return this.decompressTable(rows?.[0]?.dataTable)?.schema;
     }
 
     async getAllDashboardDataSources(dashboardId: string) {
@@ -96,6 +98,15 @@ class ExcelService {
         WHERE "dataSourceId" = '${excelDataSource.dataSourceId}'
         ;`;
         return await executeQuery(query);
+    }
+
+    private compressTable(table: Table) {
+        return pako.deflate(JSON.stringify(table), { level: 9 });
+    }
+
+    private decompressTable(compressedTable: string) {
+        const list = compressedTable.split(",") as any;
+        return JSON.parse(pako.inflate(list as any, { to: 'string' }));
     }
 }
 
