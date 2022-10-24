@@ -1,13 +1,32 @@
 import cors from '@fastify/cors';
 import Fastify from 'fastify';
+import { fastifyAuth0Verify } from 'fastify-auth0-verify';
+import fs from 'fs';
+import path from 'path';
+import { auth0Config } from './auth/authConfig';
 import { PORT } from './config';
-import rootRouter from './routes';
 import dbConnector from './db/db';
+import rootRouter from './routes';
 
-const fastify = Fastify();
+const fastify = Fastify({
+	https: {
+		key: fs.readFileSync(path.join(__dirname, 'cert.key')),
+		cert: fs.readFileSync(path.join(__dirname, 'cert.crt'))
+	}}
+);
+
 fastify.register(cors, { origin: true });
 fastify.register(rootRouter);
 fastify.register(dbConnector);
+fastify.register(fastifyAuth0Verify, auth0Config);
+fastify.addHook("onRequest", async (request, reply) => {
+	try {
+	  await request.jwtVerify()
+	} catch (err) {
+	console.log(err);
+	  reply.send(err)
+	}
+  });
 
 const start = async () => {
     try {
