@@ -56,7 +56,7 @@ class ExcelService {
         return id;
     }
 
-    async getDataBySourceId(dataSourceId: string) {
+    async getDataBySourceId(dataSourceId: string): Promise<Table> {
         const query = `
         SELECT "dataTable" FROM ${DATABASE_NAME}."${this.tableName}"
         WHERE "dataSourceId" = '${dataSourceId}'
@@ -105,6 +105,7 @@ class ExcelService {
     }
 
     private decompressTable(compressedTable: string) {
+        if (!compressedTable) return null;
         const list = compressedTable.split(",") as any;
         return JSON.parse(pako.inflate(list as any, { to: 'string' }));
     }
