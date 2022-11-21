@@ -12,7 +12,7 @@ class AggregationService {
     async runAggregation(graphConfig: GraphConfig, dataSourceId: string) {
         const table = await excelService.getDataBySourceId(dataSourceId);
         const series: { name: string; y: number; }[] = [];
-        if (graphConfig.y_field.aggragation === "sum") {
+        if (graphConfig.y_field.aggragation === "valuesCount") {
             const uniqValues: string[] = _.uniq(table?.data.map(record => record[graphConfig.x_field as any]));
             uniqValues.forEach(v => {
                 series.push({
