@@ -2,13 +2,17 @@
 import { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import { Client } from 'pg';
-// TODO: secure details
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+
+dotenv.config(); // not ideal, but the only way I managed to make .env readable. TODO: try changing it in the future
+
 export const client = new Client({
-    user: 'tivbbvpcyifsmb',
-    password: "14e33f00cacb4bc5591250387370c3fa1e51ef684d1f66f1a6d6b4bb30142708",
-    host: 'ec2-52-18-201-153.eu-west-1.compute.amazonaws.com',
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    host: process.env.PGHOST,
     port: 5432,
-    database: "detg4pkjjgn995",
+    database: process.env.PGDATABASE,
+	connectionString: process.env.DATABASE_URL,
     ssl: {
         rejectUnauthorized: false,
     }
