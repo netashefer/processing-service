@@ -8,6 +8,7 @@
     "@fastify/swagger": "^7.6.1",
     "compress-json": "^2.1.2",
     "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
     "fastify": "^4.7.0",
     "fastify-auth0-verify": "^0.8.3",
     "lodash": "^4.17.21",
