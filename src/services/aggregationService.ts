@@ -12,12 +12,21 @@ class AggregationService {
     async runAggregation(graphConfig: GraphConfig, dataSourceId: string) {
         const table = await excelService.getDataBySourceId(dataSourceId);
         const series: { name: string; y: number; }[] = [];
-        if (graphConfig.y_field.aggragation === "sum") {
-            const uniqValues: string[] = _.uniq(table?.data.map(record => record[graphConfig.x_field as any]));
-            uniqValues.forEach(v => {
+        if (graphConfig.y_field.aggragation === "valuesCount") {
+            const uniqueValues: string[] = _.uniq(table?.data.map(record => record[graphConfig.x_field as any]));
+            uniqueValues.forEach(v => {
                 series.push({
                     name: v,
                     y: table?.data?.filter(record => record[graphConfig.x_field as any] === v).length
+                });
+            });
+        }
+		if (graphConfig.y_field.aggragation === "uniqueValues") {
+            const uniqueValues: string[] = _.uniq(table?.data.map(record => record[graphConfig.x_field as any]));
+            uniqueValues.forEach(v => {
+                series.push({
+                    name: v,
+                    y: 1 // i am lazy
                 });
             });
         }
