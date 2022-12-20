@@ -1,10 +1,9 @@
 
-import { v4 as uuid } from 'uuid';
-import { DATABASE_NAME, Tables } from '../db/db.constants';
-import { executeQuery } from '../db/queryExecuter';
+import _ from 'lodash';
+import { Tables } from '../db/db.constants';
+import { getCountOfValue, getUniqAxisValues, getUniqAxisValuesWhere } from '../helpers/aggregation.helper';
 import { GraphConfig } from '../types/graph.types';
 import { excelService } from './excelService';
-import _ from 'lodash';
 
 class AggregationService {
     tableName = Tables.dashboards;
@@ -12,17 +11,32 @@ class AggregationService {
     async runAggregation(graphConfig: GraphConfig, dataSourceId: string) {
         const table = await excelService.getDataBySourceId(dataSourceId);
         const series: { name: string; y: number; }[] = [];
-        if (graphConfig.y_field.aggragation === "valuesCount") {
-            const uniqueValues: string[] = _.uniq(table?.data.map(record => record[graphConfig.x_field as any]));
+
+        if (graphConfig.dataFields) {
+            return table?.data?.map((record, index) => {
+                const fields = _.pick(record, graphConfig.dataFields?.map(a => a.field) || []);
+                return { ...fields, id: index };
+            });
+        } else if (graphConfig.x_field) {
+            const xValues = getUniqAxisValues(table, graphConfig.x_field);
+            xValues.forEach(v => {
+                series.push({
+                    name: v,
+                    y: graphConfig.y_field.aggragation === "valuesCount" ?
+                        getCountOfValue(table, graphConfig.x_field as string, v) :
+                        getUniqAxisValuesWhere(table, graphConfig.x_field, graphConfig.y_field.field as string, v).length,
+                });
+            });
+        } else if (graphConfig.y_field.aggragation === "valuesCount") {
+            const uniqueValues: string[] = getUniqAxisValues(table, graphConfig.y_field.field as string);
             uniqueValues.forEach(v => {
                 series.push({
                     name: v,
-                    y: table?.data?.filter(record => record[graphConfig.x_field as any] === v).length
+                    y: getCountOfValue(table, graphConfig.y_field.field as string, v),
                 });
             });
-        }
-		if (graphConfig.y_field.aggragation === "uniqueValues") {
-            const uniqueValues: string[] = _.uniq(table?.data.map(record => record[graphConfig.x_field as any]));
+        } else if (graphConfig.y_field.aggragation === "uniqueValues") {
+            const uniqueValues: string[] = getUniqAxisValues(table, graphConfig.y_field.field as string);
             uniqueValues.forEach(v => {
                 series.push({
                     name: v,
