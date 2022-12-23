@@ -14,7 +14,7 @@ class AggregationService {
 
         if (graphConfig.dataFields) {
             return table?.data?.map((record, index) => {
-                const fields = _.pick(record, graphConfig.dataFields?.map(a => a.field) || []);
+                const fields = _.pick(record, graphConfig.dataFields || []);
                 return { ...fields, id: index };
             });
         } else if (graphConfig.x_field) {
