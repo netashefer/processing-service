@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import { Tables } from '../db/db.constants';
 import { getCountOfValue, getUniqAxisValues, getUniqAxisValuesWhere } from '../helpers/aggregation.helper';
+import { buildParserBySchema, parseDataByMap, ParserToSendMap } from '../helpers/dataParser.helper';
 import { GraphConfig } from '../types/graph.types';
 import { excelService } from './excelService';
 
@@ -10,6 +11,9 @@ class AggregationService {
 
     async runAggregation(graphConfig: GraphConfig, dataSourceId: string) {
         const table = await excelService.getDataBySourceId(dataSourceId);
+        const columnParsingMap = buildParserBySchema(table.schema, ParserToSendMap);
+        table.data = parseDataByMap(table.data, columnParsingMap);
+
         const series: { name: string; y: number; }[] = [];
 
         if (graphConfig.dataFields) {

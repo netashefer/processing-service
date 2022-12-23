@@ -1,46 +1,17 @@
-import { parse } from 'date-fns';
 import pako from 'pako';
 import { v4 as uuid } from 'uuid';
 import { DATABASE_NAME, Tables } from "../db/db.constants";
 import { executeQuery } from "../db/queryExecuter";
-import { ColumnParsingMap, DataSourcePayload } from "../types/excel.types";
+import { buildParserBySchema, parseDataByMap, ParserToSaveMap, ParserToSendMap } from '../helpers/dataParser.helper';
+import { DataSourcePayload } from "../types/excel.types";
 import { Table } from "../types/table.types";
-
-enum supportedDataTypes {
-    date = "(DATE)",
-    number = "(NUMBER)"
-}
 
 class ExcelService {
     tableName = Tables.dataSources;
 
     parseTable(table: Table) {
-        const columnParsingMap: ColumnParsingMap = {};
-        table.schema.forEach(column => { // look in the office about locale. add error handle
-            if (column.includes(supportedDataTypes.date)) { // support DD/MM/yyyy
-                columnParsingMap[column] = (dateString: string) => {
-                    try {
-                        const [month, date, year] = dateString?.split("/");
-                        const formattedDate = [date.padStart(2, '0'), month.padStart(2, '0'), year.padStart(2, '0')].join('/');
-                        return parse(`${formattedDate}`, 'dd/MM/yy', new Date(), { weekStartsOn: 1, firstWeekContainsDate: 1 });
-                    } catch {
-                        return null;
-                    }
-                };
-            } else if (column.includes(supportedDataTypes.number)) {
-                columnParsingMap[column] = parseInt;
-            }
-        });
-
-        const data: any[] = [];
-        table.data.forEach(dataRow => {
-            Object.keys(columnParsingMap).forEach(column => {
-                dataRow[column] = columnParsingMap[column]?.(dataRow[column]);
-            });
-            data.push(dataRow);
-        });
-
-        table.data = data;
+        const columnParsingMap = buildParserBySchema(table.schema, ParserToSaveMap);
+        table.data = parseDataByMap(table.data, columnParsingMap);
         return table;
     }
 
