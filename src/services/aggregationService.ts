@@ -1,7 +1,7 @@
 
-import _ from 'lodash';
+import _, { pick } from 'lodash';
 import { Tables } from '../db/db.constants';
-import { getCountOfValue, getUniqAxisValues, getUniqAxisValuesWhere } from '../helpers/aggregation.helper';
+import { calcWeight, createWordsArr, EMPTY_VALUE_FILLER, getCountOfValue, getUniqAxisValues, getUniqAxisValuesWhere } from '../helpers/aggregation.helper';
 import { buildParserBySchema, parseDataByMap, ParserToSendMap } from '../helpers/dataParser.helper';
 import { GraphConfig } from '../types/graph.types';
 import { excelService } from './excelService';
@@ -17,15 +17,21 @@ class AggregationService {
         const series: { name: string; y: number; }[] = [];
 
         if (graphConfig.dataFields) {
+            if (graphConfig?.dataFieldsAggregation) {
+                const wordsArr = createWordsArr(table, graphConfig.dataFields);
+                return calcWeight(wordsArr);
+            }
+
             return table?.data?.map((record, index) => {
                 const fields = _.pick(record, graphConfig.dataFields || []);
                 return { ...fields, id: index };
             });
+
         } else if (graphConfig.x_field) {
             const xValues = getUniqAxisValues(table, graphConfig.x_field);
             xValues.forEach(v => {
                 series.push({
-                    name: v,
+                    name: v ?? EMPTY_VALUE_FILLER,
                     y: graphConfig.y_field.aggragation === "valuesCount" ?
                         getCountOfValue(table, graphConfig.x_field as string, v) :
                         getUniqAxisValuesWhere(table, graphConfig.x_field, graphConfig.y_field.field as string, v).length,
@@ -35,7 +41,7 @@ class AggregationService {
             const uniqueValues: string[] = getUniqAxisValues(table, graphConfig.y_field.field as string);
             uniqueValues.forEach(v => {
                 series.push({
-                    name: v,
+                    name: v ?? EMPTY_VALUE_FILLER,
                     y: getCountOfValue(table, graphConfig.y_field.field as string, v),
                 });
             });
@@ -43,7 +49,7 @@ class AggregationService {
             const uniqueValues: string[] = getUniqAxisValues(table, graphConfig.y_field.field as string);
             uniqueValues.forEach(v => {
                 series.push({
-                    name: v,
+                    name: v ?? EMPTY_VALUE_FILLER,
                     y: 1 // i am lazy
                 });
             });
