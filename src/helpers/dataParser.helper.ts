@@ -32,12 +32,14 @@ const formatDate = (date: string) => {
 const parseString = (value: any) => value ? value.toString() : null;
 const parseNumber = (value: any) => value ? parseInt(value) : null;
 
+// parse data before saving in Db
 export const ParserToSaveMap: Record<DataTypes, (value: any) => DataTypesToUse> = {
     string: parseString,
     date: parseDateISO,
     number: parseNumber
 };
 
+// parse data before sending to client
 export const ParserToSendMap: Record<DataTypes, (value: any) => DataTypesToUse> = {
     string: parseString,
     date: formatDate,
