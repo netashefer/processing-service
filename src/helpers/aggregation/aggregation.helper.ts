@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Table } from "../types/table.types";
+import { Table } from "../../types/table.types";
 
 export const EMPTY_VALUE_FILLER = 'empty value';
 
@@ -7,12 +7,12 @@ export const getUniqAxisValues = (table: Table, field: string) => {
     return _.uniq(table?.data.map(record => record[field]));
 };
 
-export const getCountOfValue = (table: Table, field: string, value: string) => {
+export const countValueOccurances = (table: Table, field: string, value: string) => {
     return table?.data?.filter(record => record[field] === value).length;
 };
 
-export const getUniqAxisValuesWhere = (table: Table, xField: string, yfield: string, where: string) => {
-    return _.uniq(table?.data.filter(record => record[xField] === where).map(record => record[yfield]));
+export const countUniqYFiledValuesOfXAxisValue = (table: Table, xField: string, yfield: string, where: string) => {
+    return _.uniq(table?.data.filter(record => record[xField] === where).map(record => record[yfield])).length || 0;
 };
 
 export const createWordsArr = (table: Table, dataFields: string[]) => {

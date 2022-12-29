@@ -1,60 +1,31 @@
 
-import _, { pick } from 'lodash';
 import { Tables } from '../db/db.constants';
-import { calcWeight, createWordsArr, EMPTY_VALUE_FILLER, getCountOfValue, getUniqAxisValues, getUniqAxisValuesWhere } from '../helpers/aggregation.helper';
+import { calcDataFieldsWeight, countByAggregation, pickDataFields } from '../helpers/aggregation/aggregation.decider';
 import { buildParserBySchema, parseDataByMap, ParserToSendMap } from '../helpers/dataParser.helper';
 import { GraphConfig } from '../types/graph.types';
 import { excelService } from './excelService';
 
-class AggregationService {
+export class AggregationService {
     tableName = Tables.dashboards;
 
     async runAggregation(graphConfig: GraphConfig, dataSourceId: string) {
-        const table = await excelService.getDataBySourceId(dataSourceId);
-        const columnParsingMap = buildParserBySchema(table.schema, ParserToSendMap);
-        table.data = parseDataByMap(table.data, columnParsingMap);
-
-        const series: { name: string; y: number; }[] = [];
+        const table = await this.getParsedTable(dataSourceId);
 
         if (graphConfig.dataFields) {
             if (graphConfig?.dataFieldsAggregation) {
-                const wordsArr = createWordsArr(table, graphConfig.dataFields);
-                return calcWeight(wordsArr);
+                return calcDataFieldsWeight(table, graphConfig);
             }
-
-            return table?.data?.map((record, index) => {
-                const fields = _.pick(record, graphConfig.dataFields || []);
-                return { ...fields, id: index };
-            });
-
+            return pickDataFields(table, graphConfig);
         } else if (graphConfig.x_field) {
-            const xValues = getUniqAxisValues(table, graphConfig.x_field);
-            xValues.forEach(v => {
-                series.push({
-                    name: v ?? EMPTY_VALUE_FILLER,
-                    y: graphConfig.y_field.aggragation === "valuesCount" ?
-                        getCountOfValue(table, graphConfig.x_field as string, v) :
-                        getUniqAxisValuesWhere(table, graphConfig.x_field, graphConfig.y_field.field as string, v).length,
-                });
-            });
-        } else if (graphConfig.y_field.aggragation === "valuesCount") {
-            const uniqueValues: string[] = getUniqAxisValues(table, graphConfig.y_field.field as string);
-            uniqueValues.forEach(v => {
-                series.push({
-                    name: v ?? EMPTY_VALUE_FILLER,
-                    y: getCountOfValue(table, graphConfig.y_field.field as string, v),
-                });
-            });
-        } else if (graphConfig.y_field.aggragation === "uniqueValues") {
-            const uniqueValues: string[] = getUniqAxisValues(table, graphConfig.y_field.field as string);
-            uniqueValues.forEach(v => {
-                series.push({
-                    name: v ?? EMPTY_VALUE_FILLER,
-                    y: 1 // i am lazy
-                });
-            });
+            return countByAggregation(table, graphConfig);
         }
-        return series;
+    }
+
+    async getParsedTable(dataSourceId: string) {
+        const table = await excelService.getDataBySourceId(dataSourceId);
+        const columnParsingMap = buildParserBySchema(table.schema, ParserToSendMap);
+        table.data = parseDataByMap(table.data, columnParsingMap);
+        return table;
     }
 }
 
