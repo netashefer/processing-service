@@ -37,7 +37,7 @@ export class AggregationService {
         const invalidFields = _.uniq(allFields).filter(field => {
             return !table.schema.includes(field);
         });
-        if (invalidFields) {
+        if (invalidFields?.length) {
             throw new CustomError('config is not valid', invalidFields);
         }
     }
