@@ -63,9 +63,12 @@ class ExcelService {
     }
 
     async replaceDataSource(excelDataSource: DataSourcePayload) {
+        const parsedTable = this.parseTable(excelDataSource.table);
+        const compressedTable = this.compressTable(parsedTable);
+
         const query = `
         UPDATE ${DATABASE_NAME}."${this.tableName}"
-        SET "displayName" = '${excelDataSource.displayName}', "dataTable" = '${JSON.stringify(excelDataSource.table)}'
+        SET "displayName" = '${excelDataSource.displayName}', "dataTable" = '${compressedTable}'
         WHERE "dataSourceId" = '${excelDataSource.dataSourceId}'
         ;`;
         return await executeQuery(query);
