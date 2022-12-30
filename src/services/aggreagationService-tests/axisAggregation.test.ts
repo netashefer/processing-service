@@ -12,7 +12,7 @@ describe("aggregationService tests - axisAggregation", () => {
 
     describe("test records count", () => {
         test('string xField', async () => {
-            // Arange
+            // Arrange
             const graphConfig: GraphConfig = {
                 x_field: SchemaMock.stringColumn,
                 y_field: { aggragation: 'valuesCount' }
@@ -30,7 +30,7 @@ describe("aggregationService tests - axisAggregation", () => {
         });
 
         test('number xField', async () => {
-            // Arange
+            // Arrange
             const graphConfig: GraphConfig = {
                 x_field: SchemaMock.numberColumn,
                 y_field: { aggragation: 'valuesCount' }
@@ -49,7 +49,7 @@ describe("aggregationService tests - axisAggregation", () => {
 
     describe("test uniqe values count", () => {
         test('string xField, number yField', async () => {
-            // Arange
+            // Arrange
             const graphConfig: GraphConfig = {
                 x_field: SchemaMock.stringColumn,
                 y_field: { aggragation: 'uniqueValues', field: SchemaMock.numberColumn }
@@ -67,7 +67,7 @@ describe("aggregationService tests - axisAggregation", () => {
         });
 
         test('number xField, string yField', async () => {
-            // Arange
+            // Arrange
             const graphConfig: GraphConfig = {
                 x_field: SchemaMock.numberColumn,
                 y_field: { aggragation: 'uniqueValues', field: SchemaMock.stringColumn }

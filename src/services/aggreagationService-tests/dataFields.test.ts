@@ -13,7 +13,7 @@ describe("aggregationService tests - dataFields", () => {
     describe("test dataFields", () => {
         describe("dataFields without aggregation", () => {
             test('pick field without empty data', async () => {
-                // Arange
+                // Arrange
                 const graphConfig: GraphConfig = {
                     dataFields: [SchemaMock.stringColumn],
                 };
@@ -30,7 +30,7 @@ describe("aggregationService tests - dataFields", () => {
             });
 
             test('pick field with empty data', async () => {
-                // Arange
+                // Arrange
                 const graphConfig: GraphConfig = {
                     dataFields: [SchemaMock.dateColumn],
                 };
@@ -47,7 +47,7 @@ describe("aggregationService tests - dataFields", () => {
             });
 
             test('pick several fields', async () => {
-                // Arange
+                // Arrange
                 const graphConfig: GraphConfig = {
                     dataFields: [SchemaMock.stringColumn, SchemaMock.numberColumn],
                 };
@@ -66,7 +66,7 @@ describe("aggregationService tests - dataFields", () => {
 
         describe("dataFields with aggregation", () => {
             test('single field - same weight', async () => {
-                // Arange
+                // Arrange
                 const graphConfig: GraphConfig = {
                     dataFields: [SchemaMock.stringColumn],
                     dataFieldsAggregation: 'weight',
@@ -84,7 +84,7 @@ describe("aggregationService tests - dataFields", () => {
             });
 
             test('single field - different weight', async () => {
-                // Arange
+                // Arrange
                 const graphConfig: GraphConfig = {
                     dataFields: [SchemaMock.sameDataColumn],
                     dataFieldsAggregation: 'weight',
