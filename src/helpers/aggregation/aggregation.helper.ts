@@ -1,18 +1,24 @@
 import _ from "lodash";
 import { Table } from "../../types/table.types";
 
+export type AggregationFunc = (table: Table, where: string, xField: string, yfield: string) => number;
+
 export const EMPTY_VALUE_FILLER = 'empty value';
 
 export const getUniqAxisValues = (table: Table, field: string) => {
     return _.uniq(table?.data.map(record => record[field]));
 };
 
-export const countValueOccurances = (table: Table, field: string, value: string) => {
+export const countValueOccurances = (table: Table, value: string, field: string) => {
     return table?.data?.filter(record => record[field] === value).length;
 };
 
-export const countUniqYFiledValuesOfXAxisValue = (table: Table, xField: string, yfield: string, where: string) => {
+export const countUniqYFiledValuesOfXAxisValue = (table: Table, where: string, xField: string, yfield: string) => {
     return _.uniq(table?.data.filter(record => record[xField] === where).map(record => record[yfield])).length || 0;
+};
+
+export const sumYFiledValuesOfXAxisValue = (table: Table, where: string, xField: string, yfield: string) => {
+    return _.sum(table?.data.filter(record => record[xField] === where).map(record => record[yfield]));
 };
 
 export const createWordsArr = (table: Table, dataFields: string[]) => {
