@@ -1,4 +1,4 @@
-import { GraphConfig } from "../../types/graph.types";
+import { Aggragation, GraphConfig } from "../../types/graph.types";
 import { AggregationService } from "../aggregationService";
 import { mockedTable2, SchemaMock } from "./mocks";
 
@@ -15,7 +15,7 @@ describe("aggregationService tests - axisAggregation", () => {
             // Arrange
             const graphConfig: GraphConfig = {
                 x_field: SchemaMock.stringColumn,
-                y_field: { aggragation: 'valuesCount' }
+                y_field: { aggragation: Aggragation.valuesCount }
             };
 
             // Act
@@ -33,7 +33,7 @@ describe("aggregationService tests - axisAggregation", () => {
             // Arrange
             const graphConfig: GraphConfig = {
                 x_field: SchemaMock.numberColumn,
-                y_field: { aggragation: 'valuesCount' }
+                y_field: { aggragation: Aggragation.valuesCount }
             };
 
             // Act
@@ -52,7 +52,7 @@ describe("aggregationService tests - axisAggregation", () => {
             // Arrange
             const graphConfig: GraphConfig = {
                 x_field: SchemaMock.stringColumn,
-                y_field: { aggragation: 'uniqueValues', field: SchemaMock.numberColumn }
+                y_field: { aggragation: Aggragation.uniqueValues, field: SchemaMock.numberColumn }
             };
 
             // Act
@@ -70,7 +70,7 @@ describe("aggregationService tests - axisAggregation", () => {
             // Arrange
             const graphConfig: GraphConfig = {
                 x_field: SchemaMock.numberColumn,
-                y_field: { aggragation: 'uniqueValues', field: SchemaMock.stringColumn }
+                y_field: { aggragation: Aggragation.uniqueValues, field: SchemaMock.stringColumn }
             };
 
             // Act

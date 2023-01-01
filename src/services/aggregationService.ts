@@ -33,7 +33,7 @@ export class AggregationService {
     }
 
     private validateGraphConfigBySchema(table: Table, graphConfig: GraphConfig) {
-        const allFields = [...(graphConfig.dataFields || []), graphConfig.x_field, graphConfig.y_field.field].filter(Boolean);
+        const allFields = [...(graphConfig.dataFields || []), graphConfig.x_field, graphConfig.y_field?.field].filter(Boolean);
         const invalidFields = _.uniq(allFields).filter(field => {
             return !table.schema.includes(field);
         });
