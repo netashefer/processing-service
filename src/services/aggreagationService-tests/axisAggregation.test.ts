@@ -83,4 +83,24 @@ describe("aggregationService tests - axisAggregation", () => {
             ]);
         });
     });
+
+    describe("test sum values", () => {
+        test('string xField, number yField', async () => {
+            // Arrange
+            const graphConfig: GraphConfig = {
+                x_field: SchemaMock.stringColumn,
+                y_field: { aggragation: Aggragation.sum, field: SchemaMock.numberColumn }
+            };
+
+            // Act
+            const aggregatedData = await aggregationService.runAggregation(graphConfig, '1');
+
+            // Assert
+            expect(aggregatedData).toEqual([
+                { name: 'x', y: 7 },
+                { name: 'xx', y: 3 },
+                { name: 'xxx', y: 3 },
+            ]);
+        });
+    });
 });
