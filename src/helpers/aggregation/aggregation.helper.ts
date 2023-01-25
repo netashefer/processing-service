@@ -10,7 +10,7 @@ export const getUniqAxisValues = (table: Table, field: string) => {
 };
 
 export const countValueOccurances = (table: Table, value: string, field: string) => {
-    return table?.data?.filter(record => record[field] === value).length;
+    return table?.data?.filter(record => record[field] === value && !record.isGenerated).length;
 };
 
 export const countUniqYFiledValuesOfXAxisValue = (table: Table, where: string, xField: string, yfield: string) => {

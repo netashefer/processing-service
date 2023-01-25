@@ -1,4 +1,4 @@
-import { format, formatISO, parseISO } from "date-fns";
+import { format, formatISO, parse, parseISO } from "date-fns";
 import { ColumnParsingMap, DataTypesToUse } from "../types/excel.types";
 import { Table } from "../types/table.types";
 
@@ -7,7 +7,7 @@ enum SupportedDataTypes {
     number = "(NUMBER)"
 }
 
-enum DataTypes {
+export enum DataTypes {
     string = 'string',
     number = 'number',
     date = 'date'
@@ -21,12 +21,16 @@ const parseDateISO = (date: string) => {
     }
 };
 
-const formatDate = (date: string) => {
+export const formatDate = (date: string) => {
     try {
         return date ? format(parseISO(date), 'dd/MM/yyyy') : null;
     } catch {
         return null;
     }
+};
+
+export const parseGraphitFormat = (date: string) => {
+    return parse(date, 'dd/MM/yyyy', new Date());
 };
 
 const parseString = (value: any) => value ? value.toString() : null;
@@ -57,7 +61,7 @@ export const buildParserBySchema = (schema: string[], parserMap: Record<DataType
     return columnParsingMap;
 };
 
-const getColumnType = (column: string): DataTypes => {
+export const getColumnType = (column: string): DataTypes => {
     if (column.includes(SupportedDataTypes.date)) {
         return DataTypes.date;
     } else if (column.includes(SupportedDataTypes.number)) {

@@ -2,7 +2,8 @@
 import _ from 'lodash';
 import { Tables } from '../db/db.constants';
 import { calcDataFieldsWeight, countByAggregation, pickDataFields } from '../helpers/aggregation/aggregation.decider';
-import { buildParserBySchema, parseDataByMap, ParserToSendMap } from '../helpers/dataParser.helper';
+import { buildParserBySchema, DataTypes, getColumnType, parseDataByMap, ParserToSendMap } from '../helpers/dataParser.helper';
+import { fillMissingDates } from '../helpers/dates.helper';
 import CustomError from '../types/customError';
 import { GraphConfig } from '../types/graph.types';
 import { Table } from '../types/table.types';
@@ -21,6 +22,9 @@ export class AggregationService {
             }
             return pickDataFields(table, graphConfig);
         } else if (graphConfig.x_field) {
+            if (getColumnType(graphConfig.x_field) === DataTypes.date) {
+                table.data = fillMissingDates(table, graphConfig.x_field);
+            }
             return countByAggregation(table, graphConfig);
         }
     }
