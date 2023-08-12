@@ -8,12 +8,7 @@ import { PORT } from './config';
 import dbConnector from './db/db';
 import rootRouter from './routes';
 
-const fastify = Fastify({
-	https: {
-		key: fs.readFileSync(path.join(__dirname, 'cert.key')),
-		cert: fs.readFileSync(path.join(__dirname, 'cert.crt'))
-	}}
-);
+const fastify = Fastify();
 
 fastify.register(cors, { origin: true });
 fastify.register(rootRouter);
