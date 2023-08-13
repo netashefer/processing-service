@@ -1,1 +1,1 @@
-export const PORT = 3012; 
+export const PORT = process.env.PORT || 3012; 
