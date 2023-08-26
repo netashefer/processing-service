@@ -12,10 +12,6 @@ export const client = new Client({
     host: process.env.PGHOST,
     port: 5432,
     database: process.env.PGDATABASE,
-	connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false,
-    }
 });
 
 async function dbconnector(fastify: FastifyInstance) {
