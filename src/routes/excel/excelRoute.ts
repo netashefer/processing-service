@@ -12,7 +12,6 @@ const excelRoute = async (fastify: FastifyInstance) => {
     });
 
     fastify.get('/getDataTable/:id', {}, async (request, reply) => {
-        // just for now, in the future it will be part of Execute request
         const { id } = request.params as any;
         const parsedTable = await excelService.getDataBySourceId(id);
         return parsedTable;
